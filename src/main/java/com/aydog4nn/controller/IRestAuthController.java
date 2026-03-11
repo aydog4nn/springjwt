@@ -1,0 +1,12 @@
+package com.aydog4nn.controller;
+
+import com.aydog4nn.dto.DtoUser;
+import com.aydog4nn.jwt.AuthRequest;
+
+public interface IRestAuthController {
+
+    public DtoUser register(AuthRequest request);
+
+
+
+}
