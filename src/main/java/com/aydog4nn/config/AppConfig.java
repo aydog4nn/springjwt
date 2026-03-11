@@ -2,6 +2,8 @@ package com.aydog4nn.config;
 
 import com.aydog4nn.model.User;
 import com.aydog4nn.repository.UserRepository;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,7 +28,7 @@ public class AppConfig {
     public UserDetailsService userDetailsService(){
         return new UserDetailsService() {
             @Override
-            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+            public @Nullable UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
                 Optional<User> optional = userRepository.findByUsername(username);
                 if (optional.isPresent()){
                     return optional.get();
@@ -38,10 +40,8 @@ public class AppConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService());
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider(userDetailsService());
         authenticationProvider.setPasswordEncoder(passwordEncoder());
-
         return authenticationProvider;
     }
 
