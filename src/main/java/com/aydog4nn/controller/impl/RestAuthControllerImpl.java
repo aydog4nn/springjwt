@@ -3,6 +3,7 @@ package com.aydog4nn.controller.impl;
 import com.aydog4nn.controller.IRestAuthController;
 import com.aydog4nn.dto.DtoUser;
 import com.aydog4nn.jwt.AuthRequest;
+import com.aydog4nn.jwt.AuthResponse;
 import com.aydog4nn.service.IAuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,5 +22,11 @@ public class RestAuthControllerImpl implements IRestAuthController {
     @Override
     public DtoUser register(@Valid @RequestBody AuthRequest request) {
         return authService.register(request);
+    }
+
+    @PostMapping("/authenticate")
+    @Override
+    public AuthResponse authenticate(@Valid @RequestBody AuthRequest request) {
+        return authService.authenticate(request);
     }
 }
