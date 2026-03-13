@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -26,17 +27,22 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    @Autowired
+    private AuthenticationEntryPoint authenticationEntryPoint;
 
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http){
             http.
                     csrf(AbstractHttpConfigurer::disable).
-                    authorizeHttpRequests(request -> request.requestMatchers(AUTHENTICATE,REGISTER).permitAll().
-                    anyRequest().authenticated()).
-                    sessionManagement(session -> session
+                    authorizeHttpRequests(request -> request.
+                            requestMatchers(AUTHENTICATE,REGISTER).permitAll().
+                            anyRequest().authenticated()).
+                            exceptionHandling(exception -> exception.authenticationEntryPoint(authenticationEntryPoint))
+                            .sessionManagement(session -> session
                             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)).
                     authenticationProvider(authenticationProvider).
                     addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
 
 
             return http.build();
