@@ -5,7 +5,9 @@ import com.aydog4nn.dto.DtoUser;
 import com.aydog4nn.jwt.AuthRequest;
 import com.aydog4nn.jwt.AuthResponse;
 import com.aydog4nn.jwt.JwtService;
+import com.aydog4nn.jwt.RefreshToken;
 import com.aydog4nn.model.User;
+import com.aydog4nn.repository.RefreshTokenRepository;
 import com.aydog4nn.repository.UserRepository;
 import com.aydog4nn.service.IAuthService;
 import org.springframework.beans.BeanUtils;
@@ -16,7 +18,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class AuthServiceImpl implements IAuthService {
@@ -33,6 +37,17 @@ public class AuthServiceImpl implements IAuthService {
     @Autowired
     private JwtService jwtService;
 
+    @Autowired
+    private RefreshTokenRepository refreshTokenRepository;
+
+    private RefreshToken createRefreshToken(User user){
+        RefreshToken refreshToken = new RefreshToken();
+        refreshToken.setRefreshToken(UUID.randomUUID().toString());
+        refreshToken.setExpireDate(new Date(System.currentTimeMillis() +  1000*60*60*4));
+        refreshToken.setUser(user);
+
+        return refreshToken;
+    }
 
     @Override
     public DtoUser register(AuthRequest request) {
@@ -57,10 +72,12 @@ public class AuthServiceImpl implements IAuthService {
             authenticationProvider.authenticate(auth);
 
             Optional<User> optionalUser =  userRepository.findByUsername(request.getUsername());
-            String token =  jwtService.GenerateToken(optionalUser.get());
+            String accessToken =  jwtService.GenerateToken(optionalUser.get());
 
-            return new AuthResponse(token);
+            RefreshToken refreshToken = createRefreshToken(optionalUser.get());
+            refreshTokenRepository.save(refreshToken);
 
+            return  new AuthResponse(accessToken,refreshToken.getRefreshToken());
 
         }catch (Exception e) {
             System.out.println("Kullanıcı adı veya şifre hatalı");

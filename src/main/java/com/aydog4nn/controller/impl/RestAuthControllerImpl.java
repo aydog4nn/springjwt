@@ -4,7 +4,9 @@ import com.aydog4nn.controller.IRestAuthController;
 import com.aydog4nn.dto.DtoUser;
 import com.aydog4nn.jwt.AuthRequest;
 import com.aydog4nn.jwt.AuthResponse;
+import com.aydog4nn.jwt.RefreshTokenRequest;
 import com.aydog4nn.service.IAuthService;
+import com.aydog4nn.service.IRefreshTokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +19,8 @@ public class RestAuthControllerImpl implements IRestAuthController {
     @Autowired
     private IAuthService authService;
 
+    @Autowired
+    private IRefreshTokenService refreshTokenService;
 
     @PostMapping("/register")
     @Override
@@ -28,5 +32,11 @@ public class RestAuthControllerImpl implements IRestAuthController {
     @Override
     public AuthResponse authenticate(@Valid @RequestBody AuthRequest request) {
         return authService.authenticate(request);
+    }
+
+    @PostMapping("/refreshToken")
+    @Override
+    public AuthResponse refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+        return refreshTokenService.refreshToken(refreshTokenRequest);
     }
 }
