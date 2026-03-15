@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/personel")
 @RestController
-public class RestPersonelControllerImpl implements IRestPersonelController {
+public class RestPersonelControllerImpl extends RestBaseController implements IRestPersonelController {
 
     @Autowired
     private IPersonelService personelService;
@@ -25,8 +25,7 @@ public class RestPersonelControllerImpl implements IRestPersonelController {
     @GetMapping("/pageable")
     @Override
     public Page<Personel> findAllPageable(RestPageableRequest restPageableRequest) {
-        Pageable pageableRequest = PageRequest.of(restPageableRequest.getPageNumber(),restPageableRequest.getPageSize(),
-                Sort.by(Sort.Direction.DESC,"id"));
+        Pageable pageableRequest = toPageable(restPageableRequest);
         return personelService.findAllPageable(pageableRequest);
     }
 }
