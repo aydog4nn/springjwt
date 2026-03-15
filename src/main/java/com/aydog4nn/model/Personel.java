@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @Table(name = "personel")
 public class Personel {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
