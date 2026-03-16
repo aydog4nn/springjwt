@@ -1,9 +1,9 @@
 package com.aydog4nn.controller.impl;
 
-import com.aydog4nn.dto.DtoPersonel;
 import com.aydog4nn.utils.PagerUtil;
 import com.aydog4nn.utils.RestPageableEntity;
 import com.aydog4nn.utils.RestPageableRequest;
+import com.aydog4nn.utils.RestRootEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -18,6 +18,10 @@ public class RestBaseController {
 
     public <T> RestPageableEntity<T> toPageableResponse(Page<?> page, List<T> content) {
         return PagerUtil.toPageableResponse(page,content);
+    }
+
+    public <T> RestRootEntity<T> ok(T payload) {
+        return RestRootEntity.ok(payload);
     }
 
 }
