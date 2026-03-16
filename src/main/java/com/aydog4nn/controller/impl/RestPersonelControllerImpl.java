@@ -2,8 +2,10 @@ package com.aydog4nn.controller.impl;
 
 import com.aydog4nn.controller.IRestPersonelController;
 
+import com.aydog4nn.dto.DtoPersonel;
 import com.aydog4nn.model.Personel;
 import com.aydog4nn.service.IPersonelService;
+import com.aydog4nn.utils.RestPageableEntity;
 import com.aydog4nn.utils.RestPageableRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,8 +26,8 @@ public class RestPersonelControllerImpl extends RestBaseController implements IR
 
     @GetMapping("/pageable")
     @Override
-    public Page<Personel> findAllPageable(RestPageableRequest restPageableRequest) {
-        Pageable pageableRequest = toPageable(restPageableRequest);
-        return personelService.findAllPageable(pageableRequest);
+    public RestPageableEntity<DtoPersonel> findAllPageable(RestPageableRequest restPageableRequest) {
+        Page<Personel> page = personelService.findAllPageable(toPageable(restPageableRequest));
+        return toPageableResponse(page,personelService.toDTOList(page.getContent()));
     }
 }
